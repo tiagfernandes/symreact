@@ -90,6 +90,11 @@ class Invoice
      */
     private $chrono;
 
+    public function __construct()
+    {
+        $this->setSentAt(new \DateTime());
+    }
+
     /**
      * Retourn le User de la facture
      * @Groups({"invoices_read", "invoices_subresource"})
