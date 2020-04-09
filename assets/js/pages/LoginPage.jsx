@@ -1,6 +1,7 @@
 import React, {useContext, useState} from 'react';
 import authAPI from "../services/authAPI";
 import AuthContext from "../context/AuthContext";
+import Field from "../components/Forms/Field";
 
 const LoginPage = ({history}) => {
     const {setIsAuthenticated} = useContext(AuthContext);
@@ -37,27 +38,24 @@ const LoginPage = ({history}) => {
             <h1>Connexion à l'application</h1>
 
             <form onSubmit={handleSubmit}>
-                <div className="form-groupe">
-                    <label htmlFor="username">Adresse email</label>
-                    <input
-                        value={credentials.username}
-                        onChange={handleChange}
-                        type="email"
-                        placeholder="Adresse de connexion"
-                        name="username"
-                        className={"form-control" + (error && " is-invalid")}
-                    />
-                    {error && <p className="invalid-feedback">{error}</p>}
-                    <label htmlFor="password">Mot de passe</label>
-                    <input
-                        value={credentials.password}
-                        onChange={handleChange}
-                        type="password"
-                        placeholder="Mot de passe"
-                        name="password"
-                        className="form-control"
-                    />
-                </div>
+                <Field
+                    name="username"
+                    label="Adresse email"
+                    type="email"
+                    value={credentials.username}
+                    onChange={handleChange}
+                    placeholder="Adresse de connexion"
+                    error={error}
+                />
+                <Field
+                    name="password"
+                    label="Mot de passe"
+                    type="password"
+                    value={credentials.password}
+                    onChange={handleChange}
+                    placeholder="Mot de passe"
+                />
+
                 <div className="form-group">
                     <button type="submit" className="btn btn-success mt-3">Je me connecte</button>
                 </div>

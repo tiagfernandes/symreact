@@ -18,6 +18,12 @@ function deleteById(id) {
         .delete('https://localhost:8000/api/customers/' + id);
 }
 
+function addNewClient(customer) {
+    return axios
+        .post("https://localhost:8000/api/customers", customer)
+        ;
+}
+
 export default {
     findAll,
     deleteById
