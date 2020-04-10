@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import axios from "axios";
 import {toast} from "react-toastify";
 import FormContentLoader from "../components/loaders/FormContentLoader";
+import customersAPI from "../services/customersAPI";
 
 const CustomerPage = ({match}) => {
 
@@ -68,10 +69,10 @@ const CustomerPage = ({match}) => {
 
         try {
             if (editing) {
-                await axios.put("https://localhost:8000/api/customers/" + id, customer);
+                await customersAPI.update(id, customer);
                 toast.success("Le client a bien été modifié");
             } else {
-                await axios.post("https://localhost:8000/api/customers", customer);
+                await customersAPI.create(customer);
                 toast.success("Le client a bien été créé");
             }
 
