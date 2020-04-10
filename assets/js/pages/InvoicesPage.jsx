@@ -3,6 +3,8 @@ import Pagination from "../components/Pagination";
 import moment from 'moment';
 import InvoicesAPI from "../services/invoicesAPI";
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
+import TableLoader from "../components/loaders/TableLoader";
 
 const STATUS_CLASSES = {
     PAID: "success",
@@ -21,12 +23,15 @@ const InvoicesPage = props => {
     const [invoices, setInvoices] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const fetchInvoices = async () => {
         try {
             const data = await InvoicesAPI.findAll();
             setInvoices(data);
+            setLoading(false);
         } catch (e) {
+            toast.error("Une erreur est survenue !");
             console.log(e.response);
         }
     };
@@ -53,7 +58,9 @@ const InvoicesPage = props => {
 
         try {
             await InvoicesAPI.deleteById(id);
+            toast.success("Facture supprimée !");
         } catch (error) {
+            toast.error("Une erreur est survenue !");
             console.log(error.response);
             setInvoices(originalInvoices);
         }
@@ -96,7 +103,7 @@ const InvoicesPage = props => {
                 <th></th>
             </tr>
             </thead>
-            <tbody>
+            {!loading && (<tbody>
             {paginatedInvoices.map(invoice => <tr key={invoice.id}>
                 <td>{invoice.chrono}</td>
                 <td>
@@ -117,8 +124,9 @@ const InvoicesPage = props => {
                 </td>
             </tr>)}
 
-            </tbody>
+            </tbody>)}
         </table>
+        {loading && <TableLoader/>}
         <Pagination currentPage={currentPage} itemsPerPage={itemsPerPage} onPageChanged={handlePageChange}
                     length={filteredInvoices.length}/>
     </>);

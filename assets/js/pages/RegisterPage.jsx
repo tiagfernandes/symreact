@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Field from "../components/Forms/Field";
 import {Link} from "react-router-dom";
 import AuthAPI from "../services/authAPI";
+import {toast} from "react-toastify";
 
 const RegisterPage = ({history}) => {
     const [user, setUser] = useState({
@@ -38,6 +39,7 @@ const RegisterPage = ({history}) => {
         } else {
             try {
                 await AuthAPI.register(user);
+                toast.success("Vous êtes désormais inscrit");
                 history.replace("/login");
             } catch (e) {
                 console.log(e);
@@ -45,8 +47,9 @@ const RegisterPage = ({history}) => {
                     e.response.data.violations.forEach(violation => {
                         apiErrors[violation.propertyPath] = violation.message;
                     });
-
                 }
+
+                toast.success("Oups, des erreurs");
             }
         }
         setErrors(apiErrors);

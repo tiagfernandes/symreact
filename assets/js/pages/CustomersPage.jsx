@@ -2,17 +2,21 @@ import React, {useEffect, useState} from 'react';
 import Pagination from "../components/Pagination";
 import CustomersAPI from "../services/customersAPI";
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
+import TableLoader from "../components/loaders/TableLoader";
 
 const CustomersPage = props => {
     const [customers, setCustomers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState('');
+    const [loading, setLoading] = useState(true);
 
     //Récupère les customers
     const fetchCustomers = async () => {
         try {
             const data = await CustomersAPI.findAll();
             setCustomers(data);
+            setLoading(false);
         } catch (error) {
             console.log(error.response)
         }
@@ -29,8 +33,10 @@ const CustomersPage = props => {
         setCustomers(customers.filter(customer => customer.id !== id));
 
         try {
-            await CustomersAPI.deleteById(id)
+            await CustomersAPI.deleteById(id);
+            toast.success("Le client a été supprimé");
         } catch (error) {
+            toast.error("Une erreur est survenue !");
             console.log(error.response);
             setCustomers(originalCustomers);
         }
@@ -82,7 +88,7 @@ const CustomersPage = props => {
                     <th></th>
                 </tr>
                 </thead>
-                <tbody>
+                {!loading && (<tbody>
                 {paginatedCustomers.map(customer =>
                     <tr key={customer.id}>
                         <td>{customer.id}</td>
@@ -98,6 +104,7 @@ const CustomersPage = props => {
                             {customer.totalAmount.toLocaleString()} €
                         </td>
                         <td>
+                            <Link to={"/customers/" + customer.id} className="btn btn-sm btn-primary mr-1">Editer</Link>
                             <button
                                 onClick={() => handleDelete(customer.id)}
                                 disabled={customer.invoices.length > 0}
@@ -108,8 +115,9 @@ const CustomersPage = props => {
                         </td>
                     </tr>
                 )}
-                </tbody>
+                </tbody>)}
             </table>
+            {loading && <TableLoader/>}
 
             {itemsPerPage < filteredCustomers.length &&
             <Pagination currentPage={currentPage} itemsPerPage={itemsPerPage} length={filteredCustomers.length}

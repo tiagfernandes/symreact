@@ -4,11 +4,14 @@ import Select from "../components/Forms/Select";
 import {Link} from "react-router-dom";
 import CustomersAPI from "../services/customersAPI";
 import InvoicesAPI from "../services/invoicesAPI";
+import {toast} from "react-toastify";
+import FormContentLoader from "../components/loaders/FormContentLoader";
 
 const InvoicePage = ({history, match}) => {
 
     const {id = "new"} = match.params;
     const [editing, setEditing] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [invoice, setInvoice] = useState({
         amount: "",
@@ -40,7 +43,10 @@ const InvoicePage = ({history, match}) => {
             const data = await CustomersAPI.findAll();
             setCustomers(data);
             if (!invoice.customer) setInvoice({...invoice, customer: data[0]['@id']});
+
+            setLoading(false);
         } catch (e) {
+            toast.error("Une erreur est survenue !");
             console.log(e.response);
             history.replace("/invoices");
         }
@@ -50,7 +56,9 @@ const InvoicePage = ({history, match}) => {
         try {
             const {amount, status, customer} = await InvoicesAPI.findOneById(id);
             setInvoice({amount, status, customer: customer['@id']});
+            setLoading(false);
         } catch (e) {
+            toast.error("Une erreur est survenue !");
             console.log(e);
             history.replace('/invoices');
         }
@@ -71,11 +79,14 @@ const InvoicePage = ({history, match}) => {
             if (editing) {
                 console.log(editing);
                 await InvoicesAPI.update(id, invoice);
+                toast.success("La facture a bien été mise a jours");
             } else {
                 await InvoicesAPI.create(invoice);
+                toast.success("La facture a bien été créée");
             }
             history.replace("/invoices");
         } catch (e) {
+            toast.error("Une erreur est survenue !");
             if (e.response.data.violations) {
                 const apiErrors = {};
                 e.response.data.violations.forEach(violation => {
@@ -90,7 +101,8 @@ const InvoicePage = ({history, match}) => {
     return (
         <>
             {editing && <h1>Modification d'une facture</h1> || <h1>Création d'une facture</h1>}
-            <form onSubmit={handleSubmit}>
+            {loading && <FormContentLoader/>}
+            {!loading && (<form onSubmit={handleSubmit}>
                 <Field
                     name="amount"
                     type="number"
@@ -132,7 +144,7 @@ const InvoicePage = ({history, match}) => {
                     </button>
                     <Link to="/invoices" className="btn btn-link">Retour à la liste</Link>
                 </div>
-            </form>
+            </form>)}
         </>
     );
 };
