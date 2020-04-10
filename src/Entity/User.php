@@ -5,15 +5,18 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
  *      normalizationContext={"groups":{"users_read"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity("email")
  */
 class User implements UserInterface
 {
@@ -29,6 +32,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=180, unique=true)
      * @Groups({"customers_read", "invoices_read", "invoices_subresource"})
      * @Groups("users_read")
+     * @Assert\NotBlank()
      */
     private $email;
 
@@ -40,6 +44,7 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotBlank()
      */
     private $password;
 
@@ -47,6 +52,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read", "invoices_subresource"})
      * @Groups("users_read")
+     * @Assert\NotBlank()
      */
     private $firstName;
 
@@ -54,6 +60,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read", "invoices_subresource"})
      * @Groups("users_read")
+     * @Assert\NotBlank()
      */
     private $lastName;
 

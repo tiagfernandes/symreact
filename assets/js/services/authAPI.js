@@ -64,9 +64,14 @@ function isAuthenticated() {
     return false;
 }
 
+function register(user) {
+    return axios.post("https://localhost:8000/api/users", user);
+}
+
 export default {
     authenticate,
     logout,
     setup,
-    isAuthenticated
+    isAuthenticated,
+    register
 };
